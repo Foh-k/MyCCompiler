@@ -1,4 +1,5 @@
 mycc: mycc.d
+	dmd mycc.d
 
 test: mycc
 	./test.sh
