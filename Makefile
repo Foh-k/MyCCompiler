@@ -1,10 +1,14 @@
-mycc: mycc.d
-	dmd mycc.d
+CC := dmd
+FILES := mycc.d myerr.d
+EXF := mycc myerr
+
+mycc: $(FILES)
+	$(CC) $(FILES)
 
 test: mycc
 	./test.sh
 
 clean:
-	rm -f mycc *.o *~ tmp*
+	$(RM) $(EXF) *.o *~ tmp*
 
 .PHONY: test clean

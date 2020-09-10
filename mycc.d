@@ -1,10 +1,8 @@
-import std.stdio; // writeln, writefln
-import std.conv; // text
-import std.container; // SList 
-import std.array; // split, join
-import std.algorithm.iteration; // map
-import std.ascii; // isDigit
+import std;
+import std.container : SList;
+import myerr;
 
+/// トークンの種類
 enum TokenKind
 {
     operatorToken,
@@ -12,11 +10,24 @@ enum TokenKind
     eofToken
 }
 
+/// 各トークナイズされた値を保持。利用では連結リストを構成する
 struct Token
 {
+    /// 保持しているトークンの種類
     TokenKind kind;
+    /// トークンが数字である場合その値
     int val;
+    /// トークンが記号である場合その種類
     char op;
+    /// 全体の入力におけるそのトークンの位置
+    int loc;
+}
+
+/// 入力引数の確認用関数
+void checkArgs(ulong num)
+{
+    if (num != 2)
+        throw new ArgsError(num);
 }
 
 SList!Token tokenize(string pat)
@@ -28,6 +39,8 @@ SList!Token tokenize(string pat)
 
     while (p.length > 0)
     {
+        import std.ascii : isPunctuation;
+
         if (p[0].isPunctuation())
         {
             ret.insertAfter(ret[], Token(TokenKind.operatorToken, 0, parse!char(p)));
@@ -38,8 +51,8 @@ SList!Token tokenize(string pat)
         }
         else
         {
-            stderr.writeln("トークナイズできません");
-            assert(0);
+            // 値は適当
+            throw new TokenError(p, p.length);
         }
     }
 
@@ -47,16 +60,9 @@ SList!Token tokenize(string pat)
     return ret;
 }
 
-void main(string[] args)
+/// トークン列を受け取ってアセンブリに変換する関数
+void toAssembly(ref SList!Token token)
 {
-    if (args.length != 2)
-    {
-        stderr.writeln("引数の個数が正しくありません");
-        assert(0);
-    }
-
-    auto token = args[1].tokenize();
-
     writeln(".intel_syntax noprefix");
     writeln(".globl main");
     writeln("main:");
@@ -88,11 +94,38 @@ void main(string[] args)
         }
         else
         {
-            stderr.writeln("予期しない演算子");
-            assert(0);
+            // 値は適当
+            throw new SyntaxError("予期しない演算子", "a", 0);
         }
     }
-
     writeln("   ret");
     return;
+}
+
+void main(string[] args)
+{
+    try
+    {
+        // 引数確認
+        checkArgs(args.length);
+        // トークナイズ
+        auto token = tokenize(args[1]);
+        // アセンブリ出力
+        token.toAssembly();
+    }
+    catch (ArgsError e)
+    {
+        e.errWrite();
+        assert(0);
+    }
+    catch (TokenError e)
+    {
+        e.errWrite();
+        assert(0);
+    }
+    catch (SyntaxError e)
+    {
+        e.errWrite();
+        assert(0);
+    }
 }
