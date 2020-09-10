@@ -92,6 +92,6 @@ class SyntaxError : Error
         import std.range : cycle, take;
 
         stderr.writeln(userInput);
-        stderr.writeln(cycle(" ").take(errLocation), "^", msg);
+        stderr.writeln(cycle(" ").take(errLocation - 1), "^", msg);
     }
 }
