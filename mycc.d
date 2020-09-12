@@ -13,7 +13,6 @@ void main(string[] args)
 
     try
     {
-
         // 引数確認
         checkArgs(args.length);
         // トークナイズ

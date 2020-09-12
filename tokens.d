@@ -12,8 +12,8 @@ import myerr;
 /// トークンの種類
 enum TokenKind
 {
-    operatorToken,
-    numberToken,
+    opToken,
+    numToken,
     eofToken
 }
 
@@ -50,20 +50,65 @@ SList!Token tokenize(string pat)
         else if (p[0].isDigit())
         {
             ulong prevLen = p.length;
-            ret.insertAfter(ret[], Token(TokenKind.numberToken, parse!int(p),
+            ret.insertAfter(ret[], Token(TokenKind.numToken, parse!int(p),
                     ' ', loc + (prevLen - p.length)));
             loc += (prevLen - p.length);
         }
         else if (p[0].isPunctuation())
         {
-            ret.insertAfter(ret[], Token(TokenKind.operatorToken, 0, parse!char(p), loc++));
+            ret.insertAfter(ret[], Token(TokenKind.opToken, 0, parse!char(p), loc++));
         }
         else
         {
-            throw new TokenError(pat, loc);
+            throw new TokenError(loc);
         }
     }
 
     ret.insertAfter(ret[], Token(TokenKind.eofToken, 0, ' '));
     return ret;
+}
+
+/*
+    次の値が期待する記号か調べる
+    リストから渡される。sl.consume(値)って感じ。
+    もし次のやつが数字のトークンなら構文エラー
+*/
+bool consume(SList!(Token) list, char t)
+{
+    switch (list.front().kind)
+    {
+    case TokenKind.opToken:
+        if (list.front().op == t)
+        {
+            list.removeFront();
+            return true;
+        }
+        break;
+
+    case TokenKind.numToken:
+        throw new SyntaxError("不正な入力", list.front().loc);
+    default: // eof
+        break;
+    }
+
+    return false;
+}
+
+/*
+    次の値が数ならばその値を返す
+    sl.expext();で呼び出し
+    それ以外ならば構文エラー
+*/
+int expect(SList!(Token) list)
+{
+    if (list.front().kind == TokenKind.numToken)
+    {
+        immutable int ret = list.front().val;
+        list.removeFront();
+        return ret;
+    }
+    else
+    {
+        throw new SyntaxError("数ではありません", list.front().loc);
+    }
 }

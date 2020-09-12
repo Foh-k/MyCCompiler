@@ -44,29 +44,28 @@ class TokenError : Error
     /// ユーザーの入力全体
     string userInput;
     /// エラーの発生した場所
-    ulong errLocation;
+    ulong errLoc;
 
     /*
     コンストラクタ
     throw new TokenError("入力文字列", エラー位置);
     で呼び出し
     */
-    this(string input, ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
+    this(ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
     {
         string msg = "トークナイズできません";
         super(msg, nextInChain);
-        userInput = input;
-        errLocation = loc;
+        errLoc = loc;
     }
 
     /// エラー出力用関数
     void errWrite()
     {
-        import std.stdio : stderr, writeln;
+        import std.stdio : stderr, writefln;
         import std.range : cycle, take;
 
-        stderr.writeln(userInput);
-        stderr.writeln(cycle(" ").take(errLocation), "^", msg);
+        stderr.writeln(msg);
+        stderr.writefln("(%s)文字目に不正な入力", errLoc);
     }
 }
 
@@ -77,27 +76,25 @@ class SyntaxError : Error
     /// ユーザーの入力全体
     string userInput;
     /// エラーの発生した場所
-    ulong errLocation;
+    ulong errLoc;
 
     /*
     コンストラクタ
-    throw new SyntaxError("エラー内容", "入力文字列", エラー位置);
+    throw new SyntaxError("エラー内容", エラー位置);
     で呼び出し
     */
-    this(string msg, string input, ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
+    this(string msg, ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
     {
         super(msg, nextInChain);
-        userInput = input;
-        errLocation = loc;
+        errLoc = loc;
     }
 
     /// エラー出力用関数
     void errWrite()
     {
-        import std.stdio : stderr, writeln;
-        import std.range : cycle, take;
+        import std.stdio : stderr, writefln;
 
-        stderr.writeln(userInput);
-        stderr.writeln(cycle(" ").take(errLocation - 1), "^", msg);
+        stderr.writeln(msg);
+        stderr.writefln("(%s)文字目に不正な入力", errLoc);
     }
 }
