@@ -1,6 +1,15 @@
 CC := dmd
-FILES := mycc.d myerr.d
-EXF := mycc myerr
+
+FILES := mycc.d
+FILES += myerr.d
+FILES += tokens.d
+FILES += assembly.d
+
+EXFILE := mycc
+EXFILE += myerr
+EXFILE += tokens
+EXFILE += assembly
+
 
 mycc: $(FILES)
 	$(CC) $(FILES)
@@ -9,6 +18,6 @@ test: mycc
 	./test.sh
 
 clean:
-	$(RM) $(EXF) *.o *~ tmp*
+	$(RM) $(EXFILE) *.o *~ tmp*
 
 .PHONY: test clean
