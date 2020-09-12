@@ -1,4 +1,4 @@
-import myerr, tokens, assembly;
+import myerr, tokens, rdp, assembly;
 
 /// 入力引数の確認用関数
 void checkArgs(ulong num)
@@ -15,17 +15,20 @@ void main(string[] args)
     {
         // 引数確認
         checkArgs(args.length);
-        // トークナイズ
+        // 字句解析
         auto token = tokenize(args[1]);
+        // 構文解析
+        auto tree = token.expr();
+        tree.treeWrite();
         // アセンブリ出力
-        token.toAssembly();
+        // token.toAssembly();
     }
     catch (ArgsError e)
     {
         e.errWrite();
         assert(0);
     }
-    catch (TokenError e)
+    catch (LexicalError e)
     {
         e.errWrite();
         assert(0);

@@ -38,11 +38,9 @@ class ArgsError : Error
     }
 }
 
-/// トークナイズ時のエラーを補足するためのクラス
-class TokenError : Error
+/// 字句解析時のエラーを補足するためのクラス
+class LexicalError : Error
 {
-    /// ユーザーの入力全体
-    string userInput;
     /// エラーの発生した場所
     ulong errLoc;
 
@@ -51,9 +49,8 @@ class TokenError : Error
     throw new TokenError("入力文字列", エラー位置);
     で呼び出し
     */
-    this(ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
+    this(string msg, ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
     {
-        string msg = "トークナイズできません";
         super(msg, nextInChain);
         errLoc = loc;
     }
@@ -61,11 +58,14 @@ class TokenError : Error
     /// エラー出力用関数
     void errWrite()
     {
-        import std.stdio : stderr, writefln;
+        import std.stdio : stderr, writeln, writefln;
         import std.range : cycle, take;
 
-        stderr.writeln(msg);
+        stderr.writeln("Message:\n", msg);
         stderr.writefln("(%s)文字目に不正な入力", errLoc);
+        stderr.writeln("File: ", file);
+        stderr.writeln("Line: ", line);
+        stderr.writeln("Stack trace:\n", info);
     }
 }
 
@@ -73,8 +73,6 @@ class TokenError : Error
 /// トークナイズ時のエラーを補足するためのクラス
 class SyntaxError : Error
 {
-    /// ユーザーの入力全体
-    string userInput;
     /// エラーの発生した場所
     ulong errLoc;
 
@@ -92,9 +90,13 @@ class SyntaxError : Error
     /// エラー出力用関数
     void errWrite()
     {
-        import std.stdio : stderr, writefln;
+        import std.stdio : stderr, writeln, writefln;
 
-        stderr.writeln(msg);
+        stderr.writeln("Message:\n", msg);
         stderr.writefln("(%s)文字目に不正な入力", errLoc);
+        stderr.writeln("File: ", file);
+        stderr.writeln("Line: ", line);
+        stderr.writeln("Stack trace:\n", info);
+
     }
 }

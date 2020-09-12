@@ -21,7 +21,7 @@ enum TokenKind
 struct Token
 {
     /// 保持しているトークンの種類
-    TokenKind kind;
+    TokenKind tkind;
     /// トークンが数字である場合その値
     int val;
     /// トークンが記号である場合その種類
@@ -60,7 +60,7 @@ SList!Token tokenize(string pat)
         }
         else
         {
-            throw new TokenError(loc);
+            throw new LexicalError("トークナイズできません", loc);
         }
     }
 
@@ -75,20 +75,13 @@ SList!Token tokenize(string pat)
 */
 bool consume(SList!(Token) list, char t)
 {
-    switch (list.front().kind)
+    if (list.front().tkind == TokenKind.opToken)
     {
-    case TokenKind.opToken:
         if (list.front().op == t)
         {
             list.removeFront();
             return true;
         }
-        break;
-
-    case TokenKind.numToken:
-        throw new SyntaxError("不正な入力", list.front().loc);
-    default: // eof
-        break;
     }
 
     return false;
@@ -101,7 +94,7 @@ bool consume(SList!(Token) list, char t)
 */
 int expect(SList!(Token) list)
 {
-    if (list.front().kind == TokenKind.numToken)
+    if (list.front().tkind == TokenKind.numToken)
     {
         immutable int ret = list.front().val;
         list.removeFront();

@@ -20,7 +20,7 @@ void toAssembly(ref SList!Token token)
 
     while (!token.empty())
     {
-        switch (token.front().kind)
+        switch (token.front().tkind)
         {
         case TokenKind.opToken:
             if (token.consume('+'))
