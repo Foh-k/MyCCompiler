@@ -21,15 +21,15 @@ enum NodeKind
 struct Node
 {
     NodeKind nkind;
-    Node* rhs;
     Node* lhs;
+    Node* rhs;
     int val;
 
-    this(NodeKind kind, Node* rhs, Node* lhs)
+    this(NodeKind kind, Node* lhs, Node* rhs)
     {
         this.nkind = kind;
-        this.rhs = rhs;
         this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     this(int num)
@@ -100,10 +100,10 @@ void treeWrite(Node* root)
         else
             write(f.nkind, "  ");
 
-        if (f.rhs)
-            q.insertBack(f.rhs);
         if (f.lhs)
             q.insertBack(f.lhs);
+        if (f.rhs)
+            q.insertBack(f.rhs);
     }
     writeln();
 }

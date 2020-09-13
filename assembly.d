@@ -4,43 +4,60 @@
 
 module assembly;
 
-import tokens, myerr;
-import std.container : SList;
+import tokens, rdp, myerr;
 
-/// トークン列を受け取ってアセンブリに変換する関数
-void toAssembly(ref SList!Token token)
+/// 構文木を受け取ってアセンブリに変換する関数
+void toAssembly(Node* node)
 {
-    import std.conv : text;
     import std.stdio : writeln, writefln;
 
     writeln(".intel_syntax noprefix");
     writeln(".globl main");
     writeln("main:");
-    writefln("  mov rax, %s", token.expect());
 
-    while (!token.empty())
-    {
-        switch (token.front().tkind)
-        {
-        case TokenKind.opToken:
-            if (token.consume('+'))
-                writefln("  add rax, %s", token.expect());
-            else if (token.consume('-'))
-                writefln("  sub rax, %s", token.expect());
-            else
-                throw new SyntaxError("予期しない演算子", token.front().loc);
+    node.gen();
 
-            break;
-
-        case TokenKind.numToken:
-            throw new SyntaxError("不正な入力", token.front().loc);
-            break;
-
-        default: // eof
-            token.removeFront();
-            break;
-        }
-    }
+    writeln("   pop rax");
     writeln("   ret");
     return;
+}
+
+/// 構文木からスタックマシンをエミュレートする関数
+void gen(Node* node)
+{
+    import std.stdio : writeln, writefln;
+
+    if (node.nkind == NodeKind.NumNode)
+    {
+        writefln("   push %s", node.val);
+        return;
+    }
+
+    gen(node.lhs);
+    gen(node.rhs);
+
+    writeln("   pop rdi");
+    writeln("   pop rax");
+
+    switch (node.nkind)
+    {
+    case NodeKind.AddNode:
+        writeln("   add rax, rdi");
+        break;
+    case NodeKind.SubNode:
+        writeln("   sub rax, rdi");
+        break;
+    case NodeKind.MulNode:
+        writeln("   imul rax, rdi");
+        break;
+    case NodeKind.DivNode:
+        writeln("   cqo");
+        writeln("   idiv rdi");
+        break;
+    default:
+        assert(0);
+        break;
+    }
+
+    writeln("   push rax");
 }

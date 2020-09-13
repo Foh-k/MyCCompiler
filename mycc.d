@@ -21,9 +21,9 @@ void main(string[] args)
         auto token = tokenize(args[1]);
         // 構文解析
         auto tree = token.expr();
-        tree.writeGraphviz();
+        // tree.writeGraphviz(); // デバッグ用
         // アセンブリ出力
-        // token.toAssembly();
+        tree.toAssembly();
     }
     catch (ArgsError e)
     {
