@@ -1,4 +1,6 @@
 import myerr, tokens, rdp, assembly;
+// import tools.convgraph; // デバッグ用
+
 
 /// 入力引数の確認用関数
 void checkArgs(ulong num)
@@ -19,7 +21,7 @@ void main(string[] args)
         auto token = tokenize(args[1]);
         // 構文解析
         auto tree = token.expr();
-        tree.treeWrite();
+        tree.writeGraphviz();
         // アセンブリ出力
         // token.toAssembly();
     }

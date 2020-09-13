@@ -46,7 +46,7 @@ class LexicalError : Error
 
     /*
     コンストラクタ
-    throw new TokenError("入力文字列", エラー位置);
+    throw new LexicalError("エラー文", エラー位置);
     で呼び出し
     */
     this(string msg, ulong loc, Throwable nextInChain = null) pure nothrow @nogc @safe
