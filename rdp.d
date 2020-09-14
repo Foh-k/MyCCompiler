@@ -10,11 +10,11 @@ import myerr, tokens;
 
 enum NodeKind
 {
-    AddNode,
-    SubNode,
-    MulNode,
-    DivNode,
-    NumNode
+    addNode,
+    subNode,
+    mulnode,
+    divNode,
+    numnode
 }
 
 /// 2種類のコンストラクタを持つ、木構造を形成する構造体
@@ -34,7 +34,7 @@ struct Node
 
     this(int num)
     {
-        this.nkind = NodeKind.NumNode;
+        this.nkind = NodeKind.numnode;
         this.val = num;
     }
 }
@@ -46,9 +46,9 @@ Node* expr(SList!(Token) list)
     while (1)
     {
         if (list.consume('+'))
-            node = new Node(NodeKind.AddNode, node, list.mul());
+            node = new Node(NodeKind.addNode, node, list.mul());
         else if (list.consume('-'))
-            node = new Node(NodeKind.SubNode, node, list.mul());
+            node = new Node(NodeKind.subNode, node, list.mul());
         else
             return node;
     }
@@ -61,9 +61,9 @@ Node* mul(SList!(Token) list)
     while (1)
     {
         if (list.consume('*'))
-            node = new Node(NodeKind.MulNode, node, list.unary());
+            node = new Node(NodeKind.mulnode, node, list.unary());
         else if (list.consume('/'))
-            node = new Node(NodeKind.DivNode, node, list.unary());
+            node = new Node(NodeKind.divNode, node, list.unary());
         else
             return node;
     }
@@ -77,7 +77,7 @@ Node* unary(SList!(Token) list)
     if (list.consume('-'))
     {
         Node* dummy = new Node(0);
-        Node* node = new Node(NodeKind.SubNode, dummy, list.primary());
+        Node* node = new Node(NodeKind.subNode, dummy, list.primary());
         return node;
     }
 

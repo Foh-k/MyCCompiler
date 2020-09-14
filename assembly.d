@@ -27,7 +27,7 @@ void gen(Node* node)
 {
     import std.stdio : writeln, writefln;
 
-    if (node.nkind == NodeKind.NumNode)
+    if (node.nkind == NodeKind.numnode)
     {
         writefln("   push %s", node.val);
         return;
@@ -41,16 +41,16 @@ void gen(Node* node)
 
     switch (node.nkind)
     {
-    case NodeKind.AddNode:
+    case NodeKind.addNode:
         writeln("   add rax, rdi");
         break;
-    case NodeKind.SubNode:
+    case NodeKind.subNode:
         writeln("   sub rax, rdi");
         break;
-    case NodeKind.MulNode:
+    case NodeKind.mulnode:
         writeln("   imul rax, rdi");
         break;
-    case NodeKind.DivNode:
+    case NodeKind.divNode:
         writeln("   cqo");
         writeln("   idiv rdi");
         break;
