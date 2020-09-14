@@ -56,17 +56,32 @@ Node* expr(SList!(Token) list)
 
 Node* mul(SList!(Token) list)
 {
-    Node* node = list.primary();
+    Node* node = list.unary();
 
     while (1)
     {
         if (list.consume('*'))
-            node = new Node(NodeKind.MulNode, node, list.primary());
+            node = new Node(NodeKind.MulNode, node, list.unary());
         else if (list.consume('/'))
-            node = new Node(NodeKind.DivNode, node, list.primary());
+            node = new Node(NodeKind.DivNode, node, list.unary());
         else
             return node;
     }
+}
+
+Node* unary(SList!(Token) list)
+{
+    if (list.consume('+'))
+        return list.primary();
+
+    if (list.consume('-'))
+    {
+        Node* dummy = new Node(0);
+        Node* node = new Node(NodeKind.SubNode, dummy, list.primary());
+        return node;
+    }
+
+    return list.primary();
 }
 
 Node* primary(SList!(Token) list)
