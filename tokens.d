@@ -71,7 +71,6 @@ SList!Token tokenize(string pat)
 /*
     次の値が期待する記号か調べる
     リストから渡される。sl.consume(値)って感じ。
-    もし次のやつが数字のトークンなら構文エラー
 */
 bool consume(SList!(Token) list, char t)
 {
