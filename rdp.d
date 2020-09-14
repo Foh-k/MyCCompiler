@@ -83,27 +83,3 @@ Node* primary(SList!(Token) list)
     Node* node = new Node(list.expect());
     return node;
 }
-
-/// デバッグ用の木構造出力関数。だいぶ見にくいのでなんか改良考えないとなぁ…
-void treeWrite(Node* root)
-{
-    import std.container : DList;
-    import std.stdio : write, writeln;
-
-    auto q = new DList!(Node*)(root);
-    while (!q.empty())
-    {
-        auto f = q.front();
-        q.removeFront();
-        if (f.nkind == NodeKind.NumNode)
-            write(f.val, "  ");
-        else
-            write(f.nkind, "  ");
-
-        if (f.lhs)
-            q.insertBack(f.lhs);
-        if (f.rhs)
-            q.insertBack(f.rhs);
-    }
-    writeln();
-}
